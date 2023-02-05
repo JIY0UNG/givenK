@@ -2,8 +2,10 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.7.10"
 
     `java-library`
+    `maven-publish`
 }
 
+group = "com.github.jiy0ung"
 version = "1.0.0"
 
 repositories {
@@ -35,4 +37,13 @@ tasks.jar {
 
 java {
     withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+        }
+    }
 }
