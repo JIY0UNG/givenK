@@ -9,7 +9,7 @@ Step 1. Add the JitPack repository to your build file
 allprojects {
     repositories {
         ...
-        maven { url 'https://jitpack.io' }
+        maven("https://jitpack.io")
     }
 }
 ```
@@ -17,7 +17,7 @@ allprojects {
 Step2. Add the dependency
 ```bash
 dependencies {
-    implementation 'com.github.JIY0UNG:givenK:Tag'
+    implementation("com.github.JIY0UNG:givenK:1.0.0")
 }
 ```
 
