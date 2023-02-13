@@ -23,33 +23,110 @@ dependencies {
 
 ## Usage
 ```kotlin
-class MyTest {
-    var foo by Given { "" }
+class Student(
+    val name: String,
+    val score: Int,
+    val subject: String,
+)
+
+fun grade(
+    student: Student,
+): String = if (student.score in 50..100) "PASS" else "FAIL"
+
+class ExampleTest {
+    var score by Given { 100 }
+    var student by Given {
+        Student(
+            name = "John Doe",
+            score = score,
+            subject = "algorithm",
+        )
+    }
+
+    @Test
+    @DisplayName("Grade should be PASS when score is 100")
+    fun test1() {
+        score = 100
+        assertEquals("PASS", grade(student))
+    }
+
+    @Test
+    @DisplayName("Grade should be PASS when score is 70")
+    fun test2() {
+        score = 70
+        assertEquals("PASS", grade(student))
+    }
+
+    @Test
+    @DisplayName("Grade should be FAIL when score is 40")
+    fun test3() {
+        score = 40
+        assertEquals("FAIL", grade(student))
+    }
+}
+```
+
+## More examples
+If you use givenK with [Nested annotation](https://junit.org/junit5/docs/5.4.1/api/org/junit/jupiter/api/Nested.html) in [JUnit 5](https://junit.org/junit5/) or [DescribeSpec](https://kotest.io/docs/framework/testing-styles.html#describe-spec) in [Kotest](https://github.com/kotest/kotest), you can see the changed values more clearly.
+
+```kotlin
+// Using Nested annotation in JUnit 5
+@Nested
+@DisplayName("Describe Grade")
+inner class Describe {
 
     @Nested
-    @DisplayName("When nothing given")
-    inner class Test1 {
-    
+    @DisplayName("When score is 100")
+    inner class Context1 {
+
+        @BeforeEach
+        fun setUp() {
+            score = 100
+        }
+
         @Test
-        @DisplayName("foo should be empty String")
+        @DisplayName("It should be PASS")
         fun test() {
-            assertEquals("", foo)
+            assertEquals("PASS", grade(student))
         }
     }
 
     @Nested
-    @DisplayName("When \"Hello World\" given")
-    inner class Test2 {
-    
+    @DisplayName("When score is 40")
+    inner class Context2 {
+
         @BeforeEach
         fun setUp() {
-            foo = "Hello World"
+            score = 40
         }
 
         @Test
-        @DisplayName("foo should be \"Hello World\"")
+        @DisplayName("It should be FAIL")
         fun test() {
-            assertEquals("Hello World", foo)
+            assertEquals("FAIL", grade(student))
+        }
+    }
+}
+```
+
+```kotlin
+// Using DescribeSpec in Kotest
+init {
+    describe("Describe Grade") {
+        context("When score is 100") {
+            beforeEach { score = 100 }
+
+            it("It should be PASS") {
+                grade(student) shouldBe "PASS"
+            }
+        }
+
+        context("When score is 40") {
+            beforeEach { score = 40 }
+
+            it("It should be FAIL") {
+                grade(student) shouldBe "FAIL"
+            }
         }
     }
 }
